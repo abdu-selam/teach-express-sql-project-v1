@@ -12,6 +12,10 @@ const env = {
   DB_NAME: process.env.DB_NAME,
 
   JWT_KEY: process.env.JWT_KEY,
+
+  ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+  ADDMIN_PASSWORD: process.env.ADDMIN_PASSWORD,
+  ADMIN_NAME: process.env.ADMIN_NAME,
 };
 
 module.exports = env;
