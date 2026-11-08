@@ -10,6 +10,16 @@ const signJwt = (id) => {
   return token;
 };
 
+const verifyJwt = (token) => {
+  try {
+    const payload = jwt.verify(token, env.JWT_KEY);
+    return payload;
+  } catch (error) {
+    return null;
+  }
+};
+
 module.exports = {
   signJwt,
+  verifyJwt,
 };

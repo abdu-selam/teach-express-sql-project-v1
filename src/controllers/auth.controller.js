@@ -42,6 +42,27 @@ const login = async (req, res) => {
   });
 };
 
+const changePassword = async (req, res) => {
+  const { oldPassword, newPassword } = req.body || {};
+
+  if (!oldPassword || !newPassword) {
+    throw new AppError("All fields are required", 400);
+  }
+
+  const isCorrectPassword = await argon2.verify(req.user.password, oldPassword);
+  if (!isCorrectPassword) {
+    throw new AppError("Invalid Cridential", 401);
+  }
+
+  const hashed = await argon2.hash(newPassword);
+  await Admin.updatePassword(req.user.id, hashed);
+
+  res.status(200).json({
+    message: "Password updated succesfully",
+  });
+};
+
 module.exports = {
   login,
+  changePassword,
 };
