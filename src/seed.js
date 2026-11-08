@@ -1,8 +1,14 @@
 const argon2 = require("argon2");
 const pool = require("./config/db.config");
 const env = require("./utils/env");
+const Admin = require("./models/admin.model");
 
 const addAdmin = async () => {
+  const admin = await Admin.findByEmail(env.ADMIN_EMAIL);
+  if (admin) {
+    return;
+  }
+  
   const hashed = await argon2.hash(env.ADDMIN_PASSWORD);
 
   const [result] = await pool.execute(

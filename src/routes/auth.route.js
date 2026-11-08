@@ -4,7 +4,7 @@ const { login } = require("../controllers/auth.controller");
 const router = Router();
 
 // login
-router.post("login", login)
+router.post("/login", login)
 // forgot password
 // resend forgot password email
 // reset password
