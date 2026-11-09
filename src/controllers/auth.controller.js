@@ -62,7 +62,24 @@ const changePassword = async (req, res) => {
   });
 };
 
+const logout = async (req, res) => {
+  res.clearCookie("token");
+
+  res.status(204).json({});
+};
+
+const me = async (req, res) => {
+  const response = {
+    name: req.user.name,
+    email: req.user.email,
+  };
+
+  res.status(200).json(response);
+};
+
 module.exports = {
   login,
   changePassword,
+  logout,
+  me,
 };

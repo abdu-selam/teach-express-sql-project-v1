@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { login, changePassword } = require("../controllers/auth.controller");
+const { login, changePassword, logout, me } = require("../controllers/auth.controller");
 const { protectedRoute } = require("../middlewares/auth.middleware");
 
 const router = Router();
@@ -12,6 +12,8 @@ router.post("/login", login);
 // change password
 router.patch("/change-password", protectedRoute, changePassword);
 // logout
+router.delete("/logout", protectedRoute, logout)
 // me
+router.get("/me", protectedRoute, me)
 
 module.exports = router;
