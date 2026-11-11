@@ -59,14 +59,46 @@ const forgotPassword = async (req, res) => {
   const otp = genOTP();
   await Admin.addForgotToken(admin.id, otp);
 
-  const html = forgotPasswordEmailTemplate(otp)
+  const html = forgotPasswordEmailTemplate(otp);
 
-  await sendEmail(
-    admin.email,
-    admin.name,
-    html,
-    "Forgot Pasword Email",
-  );
+  await sendEmail(admin.email, admin.name, html, "Forgot Pasword Email");
+
+  res.status(200).json({
+    message: "Email sent",
+  });
+};
+
+const resendForgotPassword = async (req, res) => {
+  const { email } = req.body || {};
+
+  if (!email) {
+    throw new AppError("Email is required", 400);
+  }
+
+  const admin = await Admin.findByEmail(email);
+  if (!admin) {
+    throw new AppError("User not found", 404);
+  }
+
+  if (!admin.forgot_token) {
+    throw new AppError("There is no requested otp", 400);
+  }
+
+  const date = new Date();
+  const forgotCreatedAT = new Date(admin.forgot_created_at).getTime();
+
+  const diff = (date - forgotCreatedAT) / (1000 * 60);
+
+  if (diff < 2) {
+    throw new AppError("Please wait for 2 minutes", 400);
+  }
+
+  const otp = genOTP();
+  await Admin.addForgotToken(admin.id, otp);
+
+  const html = forgotPasswordEmailTemplate(otp);
+
+  await sendEmail(admin.email, admin.name, html, "Forgot Pasword Email");
 
   res.status(200).json({
     message: "Email sent",
@@ -114,4 +146,5 @@ module.exports = {
   logout,
   me,
   forgotPassword,
+  resendForgotPassword,
 };
