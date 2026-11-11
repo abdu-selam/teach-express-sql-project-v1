@@ -1,5 +1,11 @@
 const { Router } = require("express");
-const { login, changePassword, logout, me } = require("../controllers/auth.controller");
+const {
+  login,
+  changePassword,
+  logout,
+  me,
+  forgotPassword,
+} = require("../controllers/auth.controller");
 const { protectedRoute } = require("../middlewares/auth.middleware");
 
 const router = Router();
@@ -7,13 +13,14 @@ const router = Router();
 // login
 router.post("/login", login);
 // forgot password
+router.post("/forgot-password", forgotPassword);
 // resend forgot password email
 // reset password
 // change password
 router.patch("/change-password", protectedRoute, changePassword);
 // logout
-router.delete("/logout", protectedRoute, logout)
+router.delete("/logout", protectedRoute, logout);
 // me
-router.get("/me", protectedRoute, me)
+router.get("/me", protectedRoute, me);
 
 module.exports = router;

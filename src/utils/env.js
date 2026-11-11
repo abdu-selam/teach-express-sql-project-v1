@@ -16,6 +16,9 @@ const env = {
   ADMIN_EMAIL: process.env.ADMIN_EMAIL,
   ADDMIN_PASSWORD: process.env.ADDMIN_PASSWORD,
   ADMIN_NAME: process.env.ADMIN_NAME,
+
+  BREVO_EMAIL: process.env.BREVO_EMAIL,
+  BREVO_KEY: process.env.BREVO_KEY,
 };
 
 module.exports = env;

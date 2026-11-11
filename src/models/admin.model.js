@@ -27,8 +27,17 @@ class Admin {
       `,
       [password, id],
     );
+  }
 
-    console.log(result)
+  static async addForgotToken(id, otp) {
+    const date = new Date();
+    const [result] = await pool.execute(
+      `UPDATE admin
+       SET forgot_token = ?, forgot_created_at = ?
+       WHERE id = ?
+      `,
+      [otp, date, id],
+    );
   }
 }
 

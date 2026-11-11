@@ -1,8 +1,10 @@
 const AppError = require("../utils/error");
 const Admin = require("../models/admin.model");
 const argon2 = require("argon2");
-const { signJwt } = require("../utils/jwt");
+const { signJwt, genOTP } = require("../utils/jwt");
 const env = require("../utils/env");
+const { sendEmail } = require("../utils/email");
+const { forgotPasswordEmailTemplate } = require("../utils/email.templates");
 
 const login = async (req, res) => {
   const { email, password } = req.body || {};
@@ -39,6 +41,35 @@ const login = async (req, res) => {
     data: {
       name: admin.name,
     },
+  });
+};
+
+const forgotPassword = async (req, res) => {
+  const { email } = req.body || {};
+
+  if (!email) {
+    throw new AppError("Email is required", 400);
+  }
+
+  const admin = await Admin.findByEmail(email);
+  if (!admin) {
+    throw new AppError("User not found", 404);
+  }
+
+  const otp = genOTP();
+  await Admin.addForgotToken(admin.id, otp);
+
+  const html = forgotPasswordEmailTemplate(otp)
+
+  await sendEmail(
+    admin.email,
+    admin.name,
+    html,
+    "Forgot Pasword Email",
+  );
+
+  res.status(200).json({
+    message: "Email sent",
   });
 };
 
@@ -82,4 +113,5 @@ module.exports = {
   changePassword,
   logout,
   me,
+  forgotPassword,
 };
