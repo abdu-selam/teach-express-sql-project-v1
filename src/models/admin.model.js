@@ -39,6 +39,16 @@ class Admin {
       [otp, date, id],
     );
   }
+
+  static async deleteForgotToken(id) {
+    const [result] = await pool.execute(
+      `UPDATE admin
+       SET forgot_token = NULL
+       WHERE id = ?
+      `,
+      [id],
+    );
+  } 
 }
 
 module.exports = Admin;

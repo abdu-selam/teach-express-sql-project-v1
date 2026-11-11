@@ -6,6 +6,7 @@ const {
   me,
   forgotPassword,
   resendForgotPassword,
+  resetPasword,
 } = require("../controllers/auth.controller");
 const { protectedRoute } = require("../middlewares/auth.middleware");
 
@@ -18,6 +19,7 @@ router.post("/forgot-password", forgotPassword);
 // resend forgot password email
 router.patch("/resend-forgot", resendForgotPassword);
 // reset password
+router.patch("/reset-password", resetPasword);
 // change password
 router.patch("/change-password", protectedRoute, changePassword);
 // logout

@@ -105,6 +105,40 @@ const resendForgotPassword = async (req, res) => {
   });
 };
 
+const resetPasword = async (req, res) => {
+  const { email, otp, password } = req.body || {};
+
+  if (!email || !otp || !password) {
+    throw new AppError("All fields are required", 400);
+  }
+
+  const admin = await Admin.findByEmail(email);
+  if (!admin) {
+    throw new AppError("User not found", 404);
+  }
+
+  if (admin.forgot_token !== otp) {
+    throw new AppError("Invalid OTP", 400);
+  }
+
+  const date = new Date();
+  const forgotCreatedAT = new Date(admin.forgot_created_at).getTime();
+
+  const diff = (date - forgotCreatedAT) / (1000 * 60 * 60);
+
+  await Admin.deleteForgotToken(admin.id);
+  if (diff > 6) {
+    throw new AppError("Expired Token", 400);
+  }
+
+  const hashed = await argon2.hash(password);
+  await Admin.updatePassword(admin.id, hashed);
+
+  res.status(200).json({
+    message: "Password updated succesfully",
+  });
+};
+
 const changePassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body || {};
 
@@ -147,4 +181,5 @@ module.exports = {
   me,
   forgotPassword,
   resendForgotPassword,
+  resetPasword
 };
