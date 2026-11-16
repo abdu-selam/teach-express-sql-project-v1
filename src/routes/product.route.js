@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const { createProduct } = require("../controllers/product.controller");
 const { upload } = require("../middlewares/multer.middleware");
+const { protectedRoute } = require("../middlewares/auth.middleware");
 
 const route = Router();
 
@@ -9,6 +10,7 @@ const route = Router();
 // route.post("/", upload.array("image", 5),createProduct);
 route.post(
   "/",
+  protectedRoute,
   upload.fields([
     { name: "thumbnail", maxCount: 1 },
     { name: "images", maxCount: 10 },

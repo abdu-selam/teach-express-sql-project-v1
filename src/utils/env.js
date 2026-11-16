@@ -19,6 +19,7 @@ const env = {
 
   BREVO_EMAIL: process.env.BREVO_EMAIL,
   BREVO_KEY: process.env.BREVO_KEY,
+  SERVER_URL: process.env.SERVER_URL,
 };
 
 module.exports = env;
