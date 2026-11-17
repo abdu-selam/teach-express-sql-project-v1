@@ -52,6 +52,12 @@ class Product {
 
     return id;
   }
+
+  static async find(sql, values) {
+    const [result] = await pool.execute(sql, values);
+
+    return result;
+  }
 }
 
 module.exports = Product;

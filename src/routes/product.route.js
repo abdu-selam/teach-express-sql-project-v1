@@ -1,5 +1,8 @@
 const { Router } = require("express");
-const { createProduct } = require("../controllers/product.controller");
+const {
+  createProduct,
+  getProducts,
+} = require("../controllers/product.controller");
 const { upload } = require("../middlewares/multer.middleware");
 const { protectedRoute } = require("../middlewares/auth.middleware");
 
@@ -17,5 +20,7 @@ route.post(
   ]),
   createProduct,
 );
+
+route.get("/", getProducts);
 
 module.exports = route;

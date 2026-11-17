@@ -1,11 +1,7 @@
-const fs = require("fs/promises");
-const path = require("path");
 const AppError = require("../utils/error");
 const { isNumber } = require("../utils/validate");
+const services = require("../services/products.services");
 const Product = require("../models/product.model");
-const { uploadImage, fileNameGenerator } = require("../utils/fileHandler");
-const ProductImage = require("../models/productImage.model");
-const env = require("../utils/env");
 
 // const createProduct = async (req, res) => {
 //   /* recieve:
@@ -89,7 +85,10 @@ const createProduct = async (req, res) => {
     throw new AppError("Price must be positive", 400);
   }
 
-  const productId = await Product.create({
+  const thumbnail = req.files.thumbnail[0];
+  const images = req.files.images;
+
+  await services.createProduct({
     title,
     description: description || "",
     price: priceVal,
@@ -102,36 +101,9 @@ const createProduct = async (req, res) => {
     frontCamera: front_camera,
     backCamera: back_camera,
     stoke: stoke || 1,
+    thumbnail,
+    images,
   });
-
-  const thumbnail = req.files.thumbnail[0];
-  const images = req.files.images;
-
-  const thumbnailName = fileNameGenerator(thumbnail.originalname);
-  const imageNames = images.map((image) =>
-    fileNameGenerator(image.originalname),
-  );
-
-  await uploadImage(thumbnail.buffer, thumbnailName);
-  await Promise.all(
-    images.map((image, i) => uploadImage(image.buffer, imageNames[i])),
-  );
-
-  await ProductImage.create({
-    url: `${env.SERVER_URL}/images/${thumbnailName}`,
-    image_type: "thumbnail",
-    product: productId,
-  });
-
-  await Promise.all(
-    images.map((image, i) => {
-      return ProductImage.create({
-        url: `${env.SERVER_URL}/images/${imageNames[i]}`,
-        product: productId,
-        image_type: "image",
-      });
-    }),
-  );
 
   res.status(200).json({
     message: "Product has been created",
@@ -139,6 +111,17 @@ const createProduct = async (req, res) => {
   });
 };
 
+const getProducts = async (req, res) => {
+  // console.log(req.query);
+  const { sql, values } = services.filterProducts(req.query);
+  const products = await Product.find(sql, values);
+
+  res.status(200).json({
+    products,
+  });
+};
+
 module.exports = {
   createProduct,
+  getProducts,
 };
