@@ -9,6 +9,15 @@ class Product {
     return result[0];
   }
 
+  static async findByTitle(title) {
+    const [result] = await pool.execute(
+      "SELECT * FROM products WHERE title = ?",
+      [title],
+    );
+
+    return result[0];
+  }
+
   static async create({
     title,
     description = "",
@@ -46,6 +55,50 @@ class Product {
         charge,
         frontCamera,
         backCamera,
+        stoke,
+      ],
+    );
+
+    return id;
+  }
+
+  static async seedCreate({
+    id,
+    title,
+    description = "",
+    price,
+    model,
+    brand,
+    ram,
+    storage,
+    battery,
+    charge,
+    front_camera,
+    back_camera,
+    stoke = 1,
+  }) {
+    const [result] = await pool.execute(
+      `INSERT INTO 
+      products(
+        id, title, description, price, model,
+        brand, ram, storage, battery, charge,
+        front_camera, back_camera, stoke
+      ) VALUES (
+        ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?
+      );`,
+      [
+        id,
+        title,
+        description,
+        price,
+        model,
+        brand,
+        ram,
+        storage,
+        battery,
+        charge,
+        front_camera,
+        back_camera,
         stoke,
       ],
     );

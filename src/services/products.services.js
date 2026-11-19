@@ -79,9 +79,16 @@ const filterProducts = (query) => {
         - asc
         - dsc
   */
-  const { min_price, max_price, brand, ram, storage, sort, order } = query;
+  const { min_price, max_price, brand, ram, storage, sort, order, search } =
+    query;
   let sql = "SELECT * FROM products WHERE 1=1";
   const values = [];
+
+  if (search && search.trim()) {
+    sql += " AND (title LIKE ? OR description LIKE ?)";
+    values.push(`%${search.trim()}%`);
+    values.push(`%${search.trim()}%`);
+  }
 
   if (isNumber(min_price)) {
     const minPrice = Number(min_price);
